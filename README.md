@@ -1,3 +1,9 @@
+# Alan AI 
+
+Alan AI is able to provide conversational voice experiences that enable humans to interact with applications of their choice, using their own voices. In other words, for the first time, our innovations make conversational voice experience very reliable and complete, that too, for any application.
+
+# Website : https://alan.app/platform
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
