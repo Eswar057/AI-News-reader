@@ -1,25 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import alanBtn from "@alan-ai/alan-sdk-web";
 
-function App() {
+import wordsToNumbers from "words-to-numbers";
+
+import NewsCards from "./components/NewsCards/NewsCards";
+import useStyles from "./styles.js";
+const alanKey =
+  "4539fbdb52c720d012c31ffe310728602e956eca572e1d8b807a3e2338fdd0dc/stage";
+
+const App = () => {
+  const [activeArticle, setActiveArticle] = useState(0);
+  const [newsArticles, setNewsArticles] = useState([]);
+  const classes = useStyles();
+
+  useEffect(() => {
+    alanBtn({
+      key: alanKey,
+      onCommand: ({ command, articles, number }) => {
+        if (command === "newHeadlines") {
+          setNewsArticles(articles);
+          setActiveArticle(-1);
+        } else if (command === "highlight") {
+          setActiveArticle((prevActiveArticle) => prevActiveArticle + 1);
+        } else if (command === "open") {
+          const parsedNumber =
+            number.length > 2
+              ? wordsToNumbers(number, { fuzzy: true })
+              : number;
+          const article = articles[parsedNumber - 1];
+
+          if (parsedNumber > articles.length) {
+            alanBtn().playText("Please try that again...");
+          } else if (article) {
+            window.open(article.url, "_blank");
+            alanBtn().playText("Opening...");
+          } else {
+            alanBtn().playText("Please try that again...");
+          }
+        }
+      },
+    });
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div className={classes.logoContainer}>
+        <img
+          src="https://i0.wp.com/synqqblog.wpcomstaging.com/wp-content/uploads/2019/11/preview.jpg?fit=1200%2C630&ssl=1"
+          className={classes.alanLogo}
+          alt="logo"
+        />
+      </div>
+      <NewsCards articles={newsArticles} activeArticle={activeArticle} />
     </div>
   );
-}
+};
 
 export default App;
